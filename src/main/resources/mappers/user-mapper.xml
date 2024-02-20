@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.kr.pms.biz.repository.mapper.UserMapperRepository">
+
+    <sql id="commonQuery">
+        SELECT
+            A.USR_ID_NO
+             , A.USR_ID
+             , A.USR_MAIL
+             , A.USR_NM
+             , A.USR_PW
+             , A.MOBILE
+             , A.USR_TYPE
+             , (SELECT CODE_NM FROM TB_COMMON WHERE CODE_GRP = 'USR_TYPE' AND CODE = A.USR_TYPE) USR_TYPE_NM
+             , DATE_FORMAT(A.LAST_LOGIN_DT, '%Y-%m-%d %H:%i') LAST_LOGIN_DT
+             , DATE_FORMAT(A.FIRST_CREATE_DT, '%Y-%m-%d %H:%i') FIRST_CREATE_DT
+             , A.PW_CNFM_NO
+             , A.MAIL_CNFM_NO
+             , A.AUTH_KEY
+             , A.LOGIN_IP
+             , A.LOGIN_TYPE
+             , (SELECT CODE_NM FROM TB_COMMON WHERE CODE_GRP = 'LOGIN_TYPE' AND CODE = A.LOGIN_TYPE) LOGIN_TYPE_NM
+             , A.USE_YN
+             , A.USER_STATE
+             , (SELECT CODE_NM FROM TB_COMMON WHERE CODE_GRP = 'USER_STATE' AND CODE = A.USER_STATE) USER_STATE_NM
+             , A.REG_DT
+             , DATE_FORMAT(A.UPD_DT, '%Y-%m-%d %H:%i') UPD_DT
+        FROM TB_USR_INFO A
+        WHERE 1=1
+
+        <if test='condUsrId != null and !"".equals(condUsrId)'>
+            AND A.USR_ID = #{condUsrId}
+        </if>
+
+        <if test='condUsrName != null and !"".equals(condUsrName)'>
+            AND A.USR_NM LIKE CONCAT('%', #{condUsrName}, '%')
+        </if>
+
+    </sql>
+
+    <select id="getUserList" parameterType="co.kr.pms.biz.vo.SearchUserVO" resultType="camelMap">
+       SELECT ROW_NUMBER() OVER() AS ROWID, A.* FROM
+        (
+            <include refid="commonQuery"></include>
+        ) A
+    </select>
+
+
+    <select id="getUserListCount" parameterType="co.kr.pms.biz.vo.SearchUserVO" resultType="int">
+        SELECT COUNT(1) FROM (
+            <include refid="commonQuery"></include>
+        ) A
+    </select>
+
+</mapper>
