@@ -208,7 +208,7 @@ gradle-app.setting
 *.hprof
 
 ### application.yml ###
-src/main/resources/application.yml
+src/main/resources/prorperties/application.yml
 
 ### .DS_Store ###
 .DS_Store
